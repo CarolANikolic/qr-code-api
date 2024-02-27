@@ -1,62 +1,31 @@
 const express = require('express');
 const qr = require('qr-image');
 const fs = require('fs');
-const { fileURLToPath } = require('url');
 const path = require('path');
 const bodyParser = require('body-parser');
-const cors = require('cors');
+const cors = require('cors')
 
-// Set-up Express framework
 const app = express();
-// Define Port
+app.use(cors())
 const port = process.env.PORT || 3000;
-app.use(cors());
-
-// Get current file path
-const currentProject = __dirname;
-// Go up two levels to the project root
-const projectRoot = path.resolve(currentProject, '../..');
-
-let URLInput;
-
-// Serve client side static files
-app.use(express.static(path.join(projectRoot, 'qr-code-test/qr-code-client/public')));
-
-// Define HomePage path
-const homePage = path.join(projectRoot, 'qr-code-test/qr-code-client/public/index.html');
-// Define confirmation page path
-const confirmationPage = path.join(projectRoot, "qr-code-test/qr-code-client/public/confirmation.html");
-
-const generateQRCode = (req, res, next) => {
-
-    let qr_png = qr.image(URLInput);
-    let outputQR = path.join(projectRoot, "qr-code-test/qr-code-client/public/images/outputQR", "qr-img.png");
-    qr_png.pipe(fs.createWriteStream(outputQR));
-    
-    fs.writeFile("URL.txt", URLInput, (err) => {
-        if (err) throw err;
-    });
-    next();
-};
-
-app.get("/", (req, res) => {
-    res.sendFile(homePage);
-});
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.post("/submit", (req, res, next) => {
-    URLInput = req.body.URL;
-    next();
+// Define the endpoint for generating QR code
+app.post('/generate-qrcode', (req, res) => {
+    const url = req.body.url;
+    const qr_png = qr.image(url);
+    const outputQRPath = path.join(__dirname, '..', 'qr-code-client', 'public', 'images', 'outputQR', 'qr-img.png');
+
+   // Pipe the QR code image to a writable stream to save it
+    qr_png.pipe(fs.createWriteStream(outputQRPath)).on('finish', () => {
+    // Respond with the file path where the client can access the saved QR code image
+    const clientLocalPathToQr = path.join('public', 'images', 'outputQR', 'qr-img.png');
+    res.send(clientLocalPathToQr);
+});
 });
 
-app.use(generateQRCode);
-
-app.post("/submit", (req, res) => {
-    res.sendFile(confirmationPage);
-});
-
-// Set-up localhost
+// Set up the server
 app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });
