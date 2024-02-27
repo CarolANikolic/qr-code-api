@@ -20,17 +20,17 @@ const projectRoot = path.resolve(currentProject, '../..');
 let URLInput;
 
 // Serve client side static files
-app.use(express.static(path.join(projectRoot, '/qr-code-client/public')));
+app.use(express.static(path.join(projectRoot, 'qr-code-test/qr-code-client/public')));
 
 // Define HomePage path
-const homePage = path.join(projectRoot, '/qr-code-client/public/index.html');
+const homePage = path.join(projectRoot, 'qr-code-test/qr-code-client/public/index.html');
 // Define confirmation page path
-const confirmationPage = path.join(projectRoot, "/qr-code-client/public/confirmation.html");
+const confirmationPage = path.join(projectRoot, "qr-code-test/qr-code-client/public/confirmation.html");
 
 const generateQRCode = (req, res, next) => {
 
     let qr_png = qr.image(URLInput);
-    let outputQR = path.join(projectRoot, "/qr-code-client/public/images/outputQR", "qr-img.png");
+    let outputQR = path.join(projectRoot, "qr-code-test/qr-code-client/public/images/outputQR", "qr-img.png");
     qr_png.pipe(fs.createWriteStream(outputQR));
     
     fs.writeFile("URL.txt", URLInput, (err) => {
