@@ -3,10 +3,11 @@ const qr = require('qr-image');
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
-const cors = require('cors')
+const cors = require('cors');
 
 const app = express();
-app.use(cors())
+// Configure CORS to allow requests from all origins
+app.use(cors());
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
