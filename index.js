@@ -7,8 +7,12 @@ const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
-// Configure CORS to allow requests from all origins
-app.use(cors());
+
+// Configure CORS to allow specific origin 
+const corsOptions = {
+    origin: 'http://127.0.0.1:5500'
+};
+app.use(cors(corsOptions));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
