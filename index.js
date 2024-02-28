@@ -24,14 +24,15 @@ app.use('/uploads', express.static(path.join(uploadsDirectory)));
 // Define the endpoint for generating QR code
 app.post('/generate-qrcode', (req, res) => {
     const url = req.body.url;
-    const qr_png = qr.image(url);
-    const qrImgPath = path.join(uploadsDirectory, 'qr-img.png');
 
-    // Pipe the QR code image to a writable stream to save it
-    qr_png.pipe(fs.createWriteStream(qrImgPath)).on('finish', () => {
-        // Respond with the file path where the client can access the saved QR code image
-        res.send('/uploads/qr-img.png'); 
-    });
+    // Generate the QR code image dynamically
+    const qr_png = qr.imageSync(url, { type: 'png' });
+
+    // Convert the image data to base64
+    const qrBase64 = qr_png.toString('base64');
+
+    // Respond with the base64 string of the QR code image
+    res.send(`data:image/png;base64,${qrBase64}`);
 });
 
 // Set up the server
