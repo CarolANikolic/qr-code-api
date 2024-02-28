@@ -1,29 +1,15 @@
 const express = require('express');
 const qr = require('qr-image');
-const fs = require('fs');
-const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configure CORS to allow specific origin 
-const corsOptions = {
-    origin: 'http://127.0.0.1:5500'
-};
-app.use(cors(corsOptions));
+// Enable CORS for all routes
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: false }));
-
-const uploadsDirectory = path.join(__dirname, 'uploads');
-// Create the uploads directory if it doesn't exist
-if (!fs.existsSync(uploadsDirectory)) {
-    fs.mkdirSync(uploadsDirectory);
-}
-
-// Serve static files from the 'uploads' directory
-app.use('/uploads', express.static(path.join(uploadsDirectory)));
 
 // Define the endpoint for generating QR code
 app.post('/generate-qrcode', (req, res) => {
