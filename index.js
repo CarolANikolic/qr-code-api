@@ -18,10 +18,10 @@ app.post('/generate-qrcode', (req, res) => {
     // Generate the QR code image dynamically
     const qr_png = qr.imageSync(url, { type: 'png' });
 
-    // Convert the image data to base64
+    // Convert the image data to base64 due to Vercel read-only file system
     const qrBase64 = qr_png.toString('base64');
 
-    // Respond with the base64 string of the QR code image
+    // Respond with data URL of the QR code image
     res.send(`data:image/png;base64,${qrBase64}`);
 });
 
