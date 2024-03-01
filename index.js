@@ -14,8 +14,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Define the endpoint for generating QR code
 app.post('/generate-qrcode', (req, res) => {
     const url = req.body.url;
-
-    // Generate the QR code image dynamically
+    try {
+        if (url) {
+         // Generate the QR code image dynamically
     const qr_png = qr.imageSync(url, { type: 'png' });
 
     // Convert the image data to base64 due to Vercel read-only file system
@@ -23,6 +24,11 @@ app.post('/generate-qrcode', (req, res) => {
 
     // Respond with data URL of the QR code image
     res.send(`data:image/png;base64,${qrBase64}`);
+        }
+    } catch (error) {
+        console.log('Error generating qr code:', error)
+        res.sendStatus(500)
+    }
 });
 
 // Set up the server
